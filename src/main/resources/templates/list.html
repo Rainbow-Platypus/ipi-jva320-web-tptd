@@ -22,7 +22,9 @@
 
             <form class="form-inline my-2 my-lg-0" role="search" action="http://localhost:8080/salaries" method="GET">
                 <div class="form-group">
-                    <input name="nom" class="form-control" placeholder="Rechercher un nom" type="text">
+<!--                    <input name="nom" class="form-control" placeholder="Rechercher un nom" type="text">-->
+                    <input name="nom" class="form-control" placeholder="Rechercher un nom" type="text" th:value="${nom}">
+
                 </div>
                 <button type="submit" class="btn btn-outline-success ml-2 my-2 my-sm-0">Rechercher</button>
             </form>

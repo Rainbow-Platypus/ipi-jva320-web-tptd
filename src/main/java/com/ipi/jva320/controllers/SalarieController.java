@@ -7,10 +7,7 @@ import com.ipi.jva320.service.SalarieAideADomicileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class SalarieController {
@@ -42,10 +39,18 @@ public class SalarieController {
     }
 
     @GetMapping("/salaries")
-    public String listSalarie(final ModelMap model) {
-        model.put("salaries", salarieAideADomicileService.getSalaries());
+    public String listSalarie(final ModelMap model,
+                              @RequestParam(required = false) String nom) {
+        if (nom != null && !nom.isEmpty()) {
+            model.put("salaries", salarieAideADomicileService.getSalaries(nom));
+        } else {
+            model.put("salaries", salarieAideADomicileService.getSalaries());
+        }
+        model.put("nom", nom);  // Passer le nom au template
         return "list";
     }
+
+
 
     @PostMapping(value = "/salaries/delete/{id}")
     public String DeleteSalarie(@PathVariable Long id) throws SalarieException {
