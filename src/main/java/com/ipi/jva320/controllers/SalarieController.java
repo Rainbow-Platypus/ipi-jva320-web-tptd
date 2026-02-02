@@ -5,6 +5,9 @@ import com.ipi.jva320.exception.SalarieException;
 import com.ipi.jva320.model.SalarieAideADomicile;
 import com.ipi.jva320.service.SalarieAideADomicileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -40,13 +43,24 @@ public class SalarieController {
 
     @GetMapping("/salaries")
     public String listSalarie(final ModelMap model,
-                              @RequestParam(required = false) String nom) {
+                              @RequestParam(required = false) String nom,
+                              @PageableDefault(size = 10, sort = "nom") Pageable pageable) {
+        Page<SalarieAideADomicile> salariesPage;
+
         if (nom != null && !nom.isEmpty()) {
-            model.put("salaries", salarieAideADomicileService.getSalaries(nom));
+            // Recherche par nom avec pagination
+            salariesPage = salarieAideADomicileService.searchSalariesByNom(nom, pageable);
         } else {
-            model.put("salaries", salarieAideADomicileService.getSalaries());
+            // Liste complète avec pagination
+            salariesPage = salarieAideADomicileService.getSalaries(pageable);
         }
-        model.put("nom", nom);  // Passer le nom au template
+
+        model.put("salaries", salariesPage.getContent());
+        model.put("totalPages", salariesPage.getTotalPages());
+        model.put("totalElements", salariesPage.getTotalElements());
+        model.put("currentPage", pageable.getPageNumber());
+        model.put("size", pageable.getPageSize());
+        model.put("nom", nom);
         return "list";
     }
 
